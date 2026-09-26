@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "业务规格模式 · 落地五步",
+    "output": "文档体系总览.html",
+    "animation": "none",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "shape", "label": "先定形：单据与业务域", "focus": ["n1", "n2"], "note": "业务域目录名是后续所有文档的引用锚点，先冻结再动笔。" },
+      { "id": "write", "label": "再落架写规格", "focus": ["n2", "n3", "n4", "ex1"], "note": "骨架由脚本生成，规格从需求与业务口述落笔；规格缺失时只能提方案，不得自造规则。" },
+      { "id": "gate", "label": "最后过闸门", "focus": ["n4", "n5", "ex2"], "note": "结构体检通过只算骨架对；真正的闸门是代码与规格的冲突被逐条登记待裁决。" }
+    ]
+  },
+  "lanes": [
+    { "id": "human", "label": "业务与人" },
+    { "id": "ai", "label": "AI 生成" },
+    { "id": "gate", "label": "验收闸门" },
+    { "id": "exceptions", "label": "例外与纪律", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "shape", "label": "定形", "fromCol": 0, "toCol": 1 },
+    { "id": "scaffold", "label": "落架", "fromCol": 2, "toCol": 2, "variant": "emphasis" },
+    { "id": "spec", "label": "写规格 + 验收", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [],
+  "mainPath": ["n1", "n2", "n3", "n4", "n5"],
+  "nodes": [
+    { "id": "n1", "lane": "human", "col": 0, "type": "frontend", "label": "列全单据台账", "sublabel": "会流转的都要列", "tag": "业务提供" },
+    { "id": "n2", "lane": "human", "col": 1, "type": "frontend", "label": "冻结业务域", "sublabel": "一域一句话职责", "tag": "不再改名" },
+    { "id": "n3", "lane": "ai", "col": 2, "type": "backend", "label": "生成骨架", "sublabel": "四文档 + 成熟度表", "tag": "apply-template" },
+    { "id": "n4", "lane": "ai", "col": 4, "type": "backend", "label": "写业务规格", "sublabel": "8 段 + 规则编号", "tag": "来源=需求" },
+    { "id": "n5", "lane": "gate", "col": 5, "type": "security", "label": "验收闸门", "sublabel": "体检 + 走通一域", "tag": "FAIL 回补" },
+    { "id": "ex1", "lane": "exceptions", "col": 4, "type": "security", "label": "只提方案", "sublabel": "规格缺失，不造规则" },
+    { "id": "ex2", "lane": "exceptions", "col": 5, "type": "database", "label": "冲突清单", "sublabel": "代码 ≠ 规格，待裁决" }
+  ],
+  "edges": [
+    { "from": "n1", "to": "n2" },
+    { "from": "n2", "to": "n3", "route": "drop", "fromSide": "bottom", "toSide": "top" },
+    { "from": "n3", "to": "n4" },
+    { "from": "n4", "to": "n5" },
+    { "from": "n4", "to": "ex1", "label": "规格未定义", "variant": "security", "role": "error", "route": "drop", "fromSide": "bottom", "toSide": "top" },
+    { "from": "n5", "to": "ex2", "variant": "emphasis", "route": "drop", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "三条内核", "items": ["业务规格是业务规则的唯一权威，优先级高于代码", "四份文档分工固定：成熟度表管现状、BLUEPRINT 管目标、DECISIONS 管理由、WORKFLOW 管流程", "改前 4 条、改后 5 检、严禁 5 条必须写进 AGENTS.md 才生效"] },
+    { "dot": "rose", "title": "红线", "items": ["禁止为了通过测试而修改业务规则", "禁止从现有代码反推规则后当权威规格", "冲突未解决前不得继续扩展依赖该冲突的功能"] },
+    { "dot": "cyan", "title": "验收判据", "items": ["check-spec-docs 退出码 0、FAIL 项为 0", "任选一域走通：读规格 → 改一处代码 → 改后 5 检", "提一个规格里没有的需求，应答「规格未定义，需确认」"] }
+  ]
+}

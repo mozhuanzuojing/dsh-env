@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  business-spec:
+    name: business-spec 模块实跑
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 脚本是 .ts，靠 Node 原生类型擦除直接执行（需 Node 23+）
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: 预演（不写盘）
+        run: |
+          mkdir -p "$RUNNER_TEMP/demo"
+          node modules/business-spec/工具/apply-template.ts \
+            --target "$RUNNER_TEMP/demo" \
+            --domains "销售管理,采购管理,库存管理" \
+            --with-sample --dry-run
+          test -z "$(ls -A "$RUNNER_TEMP/demo")"
+
+      - name: 落骨架
+        run: |
+          node modules/business-spec/工具/apply-template.ts \
+            --target "$RUNNER_TEMP/demo" \
+            --domains "销售管理,采购管理,库存管理" \
+            --with-sample
+
+      - name: 结构体检（退出码必须为 0）
+        run: |
+          node modules/business-spec/工具/check-spec-docs.ts --target "$RUNNER_TEMP/demo"
+
+      - name: 负向检查（删掉必需文档后必须报 FAIL）
+        run: |
+          rm "$RUNNER_TEMP/demo/BLUEPRINT.md"
+          if node modules/business-spec/工具/check-spec-docs.ts --target "$RUNNER_TEMP/demo"; then
+            echo "::error::体检脚本没有检出缺失的 BLUEPRINT.md"
+            exit 1
+          fi
+          echo "负向检查通过：脚本确实能报 FAIL"

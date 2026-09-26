@@ -1,0 +1,14 @@
+# 依赖与构建产物
+node_modules/
+dist/
+*.zip
+
+# 本地验收截图（体检回执已入库，截图不入库）
+_验收证据/
+*.visual-check.*.png
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
