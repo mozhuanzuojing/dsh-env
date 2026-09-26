@@ -9,10 +9,10 @@ jobs:
     name: business-spec 模块实跑
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # 脚本是 .ts，靠 Node 原生类型擦除直接执行（需 Node 23+）
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
 
