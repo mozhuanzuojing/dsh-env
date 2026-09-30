@@ -5,7 +5,7 @@
   "status": "fail",
   "visualReview": "pending",
   "artifact": {
-    "path": "D:\\project\\业务规格模板\\文档体系总览.html",
+    "path": "docs/文档体系总览.html",
     "sha256": "869a7ec4102e100f896ff9f7e80d5a67fe645b8d68a89560d5916bef6ad59e61",
     "bytes": 634538
   },

@@ -46,8 +46,12 @@ modules/business-spec/           ← 本模块（= 模板根，脚本按此相�
 └─ docs/
    ├─ 文档体系总览.html              ← 落地五步图（archify 发布级，可交互）
    ├─ 文档体系总览.png               ← 同图静态版
-   └─ 文档体系总览.workflow.json     ← 图的源规格（改图从这里改，再 archify validate）
+   ├─ 文档体系总览.workflow.json     ← 图的源规格（改图从这里改，再 archify validate）
+   └─ visual-check.receipt.json      ← 该图的容器体检回执（见下方说明）
 ```
+
+**关于 `visual-check.receipt.json`**：这是 archify `visual-check` 对上面那份 HTML 的**原始体检回执**，内容照原样保存，只做了一处规范化 —— 回执里的 `artifact.path` 原本是出图时的绝对工作路径（那个目录已删），现改为仓库内相对路径 `docs/文档体系总览.html`；`sha256` 与 `bytes` 未改，仍与仓库里这份 HTML **逐字节对应**（可自行核对）。
+回执结论是**容器约束未过**（`status: fail`，4 个桌面视口纵向需滚动、横向无溢出），保留 fail 是如实记录，不做粉饰。
 
 ---
 

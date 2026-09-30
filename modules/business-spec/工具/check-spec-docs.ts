@@ -11,6 +11,10 @@
  *   4. AGENTS.md 成熟度表里引用的规格文件真实存在
  *   5. WORKFLOW.md 含模块联动表
  *   6. 四份文档模板占位符 {{...}} 是否已替换干净
+ *   7. 域内规格文件命名符合约定（*-业务规格.md），且已登记在各自 00-域索引.md 的文件清单
+ *
+ * 约定出处：业务规格/README.md 第二节。第 7 项只报 WARN —— 目标项目若已有既定命名，
+ * 在域索引里声明后即可忽略，不阻塞。
  *
  * 退出码：0 = 全通过（可有 WARN）；1 = 有 FAIL；2 = 参数错误。
  */
@@ -122,6 +126,38 @@ function main(): void {
 
     if (!fs.existsSync(path.join(specRoot, "README.md"))) {
       add("WARN", "业务规格/README.md 不在场（域划分与命名约定无处可查）");
+    }
+
+    // 3b) 域内命名约定与索引登记（约定出处：业务规格/README.md 第二节）
+    const SPEC_SUFFIX = "-业务规格.md";
+    const SKIP_NAMES = ["00-域索引.md", "README.md"];
+    const badNames: string[] = [];
+    const unlisted: string[] = [];
+    let specCount = 0;
+    for (const d of realDomains) {
+      const domainDir = path.join(specRoot, d);
+      const files = fs
+        .readdirSync(domainDir, { withFileTypes: true })
+        .filter((f) => f.isFile() && f.name.endsWith(".md") && !SKIP_NAMES.includes(f.name))
+        .map((f) => f.name);
+      if (files.length === 0) continue;
+      specCount += files.length;
+      const indexPath = path.join(domainDir, "00-域索引.md");
+      const indexText = fs.existsSync(indexPath) ? fs.readFileSync(indexPath, "utf8") : "";
+      for (const f of files) {
+        if (!f.endsWith(SPEC_SUFFIX)) badNames.push(`${d}/${f}`);
+        if (indexText.length > 0 && !indexText.includes(f)) unlisted.push(`${d}/${f}`);
+      }
+    }
+    if (specCount > 0) {
+      if (badNames.length === 0) add("PASS", `${specCount} 份规格文件命名均符合约定（*${SPEC_SUFFIX}）`);
+      else
+        add(
+          "WARN",
+          `以下规格文件不符合命名约定 *${SPEC_SUFFIX}：${badNames.join(" / ")}（约定见 业务规格/README.md 第二节；若沿用既有命名，在域索引里声明后忽略）`,
+        );
+      if (unlisted.length === 0) add("PASS", "域内规格文件均已登记在各自 00-域索引.md 的文件清单");
+      else add("WARN", `以下规格文件未登记在所属域的 00-域索引.md 文件清单：${unlisted.join(" / ")}`);
     }
   }
 
