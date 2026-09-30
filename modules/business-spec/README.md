@@ -28,6 +28,7 @@
 ```
 modules/business-spec/           ← 本模块（= 模板根，脚本按此相对布局取件）
 ├─ README.md                        ← 本文件：用法 + 域裁剪指南
+├─ package.json                     ← 声明 type=module：脚本按 ES module 跑，不留 Node 的告警
 ├─ 迁移清单.md                       ← 逐步骤 checklist（含验收判据）
 ├─ AGENTS.md.template               ← ① 技术规范 + 开发约定 + 模块成熟度表
 ├─ BLUEPRINT.md.template            ← ② 目标架构：模块划分 / 开发顺序

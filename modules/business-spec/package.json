@@ -1,0 +1,10 @@
+{
+  "name": "dsh-env-business-spec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "业务规格模式模板：让业务规则有唯一权威来源（dsh-env 模块之一）",
+  "type": "module",
+  "engines": {
+    "node": ">=23"
+  }
+}
